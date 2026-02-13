@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Send Secret Letter 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#ffd1dc,#ffe6f0);
+    font-family:'Poppins',sans-serif;
+}
+
+.card{
+    background:white;
+    width:350px;
+    padding:25px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(255,105,180,0.25);
+}
+
+h1{
+    font-family:'Pacifico',cursive;
+    color:#ff4d88;
+}
+
+input, textarea{
+    width:90%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:15px;
+    border:1px solid #ffb6c1;
+}
+
+button{
+    border:none;
+    padding:10px 20px;
+    border-radius:20px;
+    background:linear-gradient(45deg,#ff4d88,#ff7aa8);
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Send Letter 💗</h1>
+
+    <textarea id="textInput" placeholder="Nhập nội dung thư..."></textarea>
+    <input type="file" id="imageInput" accept="image/*">
+
+    <button onclick="sendLetter()">Gửi thư 💌</button>
+</div>
+
+<script>
+const SERVER_URL = "https://YOUR_RENDER_URL";
+
+async function sendLetter(){
+    const text = document.getElementById("textInput").value;
+    const imgInput = document.getElementById("imageInput");
+
+    let imageBase64 = "";
+
+    if(imgInput.files[0]){
+        const reader = new FileReader();
+        reader.onload = async function(e){
+            imageBase64 = e.target.result;
+            await saveData(text, imageBase64);
+        }
+        reader.readAsDataURL(imgInput.files[0]);
+    }else{
+        await saveData(text, "");
+    }
+}
+
+async function saveData(text, image){
+    await fetch(SERVER_URL + "/save", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text, image})
+    });
+
+    alert("Đã gửi thư 💌");
+}
+</script>
+
+</body>
+</html>
